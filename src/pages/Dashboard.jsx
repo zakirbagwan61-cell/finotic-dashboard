@@ -6,7 +6,10 @@ import { stats, monthly, transactions } from '../data/finance'
 export default function Dashboard() {
   return (
     <main className="content">
-      <h1>Dashboard</h1>
+      <div className="page-head">
+        <h1>Dashboard</h1>
+        <p>Welcome back, here's your financial overview.</p>
+      </div>
       <div className="stats">
         {stats.map(s => <StatCard key={s.id} {...s} />)}
       </div>
