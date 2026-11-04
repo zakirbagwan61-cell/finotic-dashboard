@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Trash2, Download } from 'lucide-react'
+import { Trash2, Download, Pencil } from 'lucide-react'
+import toast from 'react-hot-toast'
 import TransactionForm from '../components/TransactionForm'
 import { useTransactions } from '../context/TransactionsContext'
 import { signed, fmtDate } from '../utils/format'
@@ -9,6 +10,7 @@ const TABS = [['all', 'All'], ['income', 'Income'], ['expense', 'Expense']]
 export default function Transactions() {
   const { transactions, search, remove, toggleStatus } = useTransactions()
   const [tab, setTab] = useState('all')
+  const [editing, setEditing] = useState(null)
 
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -17,6 +19,18 @@ export default function Transactions() {
       .filter((t) => !q || t.name.toLowerCase().includes(q) || t.category.toLowerCase().includes(q))
       .sort((a, b) => b.date.localeCompare(a.date))
   }, [transactions, search, tab])
+
+  const handleDelete = (t) => {
+    if (!window.confirm(`Delete "${t.name}"?`)) return
+    remove(t.id)
+    if (editing?.id === t.id) setEditing(null)
+    toast.success('Transaction deleted')
+  }
+
+  const handleEdit = (t) => {
+    setEditing(t)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const exportCsv = () => {
     const head = 'Name,Category,Type,Date,Status,Amount'
@@ -27,16 +41,21 @@ export default function Transactions() {
     a.download = 'transactions.csv'
     a.click()
     URL.revokeObjectURL(a.href)
+    toast.success('CSV exported')
   }
 
   return (
     <main className="content">
       <div className="page-head">
-        <h1>Transactions</h1>
-        <p>Add, search and manage all your transactions.</p>
+        <h1>{editing ? 'Edit Transaction' : 'Transactions'}</h1>
+        <p>{editing ? `Editing "${editing.name}"` : 'Add, search and manage all your transactions.'}</p>
       </div>
 
-      <TransactionForm />
+      <TransactionForm
+        key={editing ? editing.id : 'new'}
+        editing={editing}
+        onDone={() => setEditing(null)}
+      />
 
       <div className="card">
         <div className="card-head">
@@ -65,7 +84,12 @@ export default function Transactions() {
                     </button>
                   </td>
                   <td className={`amount ${t.type === 'income' ? 'green' : 'red'}`}>{signed(t)}</td>
-                  <td><button className="icon-btn danger" onClick={() => remove(t.id)} aria-label="Delete"><Trash2 size={14} /></button></td>
+                  <td>
+                    <div className="row-actions">
+                      <button className="icon-btn" onClick={() => handleEdit(t)} aria-label="Edit"><Pencil size={14} /></button>
+                      <button className="icon-btn danger" onClick={() => handleDelete(t)} aria-label="Delete"><Trash2 size={14} /></button>
+                    </div>
+                  </td>
                 </tr>
               ))}
               {!rows.length && <tr><td colSpan="6" className="empty">No transactions found.</td></tr>}

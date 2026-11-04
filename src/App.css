@@ -120,9 +120,7 @@ td.amount { font-weight: 600; font-variant-numeric: tabular-nums; }
   .topbar { padding: var(--s3) var(--s4); }
 }
 
-@media (max-width: 600px) {
-  .sidebar { display: none; }
-}
+
 
 /* ---------- Added: forms, buttons, tabs, lists ---------- */
 .card-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); flex-wrap: wrap; }
@@ -173,4 +171,32 @@ td.amount { font-weight: 600; font-variant-numeric: tabular-nums; }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
+}
+
+/* ---------- Edit, validation, mobile menu ---------- */
+.form-actions { display: flex; gap: var(--s2); }
+.form-error { grid-column: 1 / -1; color: var(--red); font-size: 13px; margin: 0; }
+.form-grid input.invalid { border-color: var(--red); }
+.row-actions { display: flex; gap: var(--s2); justify-content: flex-end; }
+.row-actions .icon-btn { width: 32px; height: 32px; }
+
+.topbar-left { display: flex; align-items: center; gap: var(--s3); min-width: 0; }
+.icon-btn.menu-btn { display: none; }
+
+@media (max-width: 600px) {
+  .sidebar {
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 240px; padding: var(--s5) var(--s4);
+    z-index: 30; transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .sidebar.open { transform: none; box-shadow: var(--shadow-md); }
+  .sidebar .logo { font-size: 22px; text-align: left; margin: 0 var(--s2) var(--s5); }
+  .sidebar .nav-label { display: inline; }
+  .sidebar a { justify-content: flex-start; }
+  .icon-btn.menu-btn { display: grid; }
+  .backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); z-index: 20; }
+  .search { width: 100%; }
+  .topbar-left { flex: 1; }
 }

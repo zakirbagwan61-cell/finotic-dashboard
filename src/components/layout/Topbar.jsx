@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Bell, Moon, Sun } from 'lucide-react'
+import { Search, Bell, Moon, Sun, Menu } from 'lucide-react'
 import { useTransactions } from '../../context/TransactionsContext'
 
-export default function Topbar({ theme, onToggleTheme }) {
+export default function Topbar({ theme, onToggleTheme, onMenu }) {
   const isDark = theme === 'dark'
   const { search, setSearch } = useTransactions()
   const navigate = useNavigate()
@@ -15,9 +15,14 @@ export default function Topbar({ theme, onToggleTheme }) {
 
   return (
     <header className="topbar">
-      <div className="search">
-        <Search size={16} />
-        <input value={search} onChange={onChange} placeholder="Search transactions..." aria-label="Search" />
+      <div className="topbar-left">
+        <button className="icon-btn menu-btn" onClick={onMenu} aria-label="Open menu">
+          <Menu size={18} />
+        </button>
+        <div className="search">
+          <Search size={16} />
+          <input value={search} onChange={onChange} placeholder="Search transactions..." aria-label="Search" />
+        </div>
       </div>
       <div className="topbar-right">
         <button

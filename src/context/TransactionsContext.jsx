@@ -24,6 +24,8 @@ export function TransactionsProvider({ children }) {
   const add = (t) =>
     setTransactions((p) => [{ ...t, id: Date.now() + '-' + Math.random().toString(36).slice(2, 7) }, ...p])
   const remove = (id) => setTransactions((p) => p.filter((t) => t.id !== id))
+  const update = (id, patch) =>
+  setTransactions((p) => p.map((t) => (t.id === id ? { ...t, ...patch } : t)))
   const toggleStatus = (id) =>
     setTransactions((p) =>
       p.map((t) => (t.id === id ? { ...t, status: t.status === 'completed' ? 'pending' : 'completed' } : t))
@@ -61,7 +63,7 @@ export function TransactionsProvider({ children }) {
     return out
   }, [transactions])
 
-  const value = { transactions, search, setSearch, add, remove, toggleStatus, resetDemo, clearAll, stats, monthly }
+  const value = { transactions, search, setSearch, add, update, remove, toggleStatus, resetDemo, clearAll, stats, monthly }
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 

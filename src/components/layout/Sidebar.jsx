@@ -9,13 +9,13 @@ const links = [
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ open, onClose }) {
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${open ? 'open' : ''}`}>
       <h2 className="logo">Finotic</h2>
       <nav>
         {links.map(({ to, icon: Icon, label, end }) => (
-          <NavLink key={to} to={to} end={end} title={label}>
+          <NavLink key={to} to={to} end={end} title={label} onClick={onClose}>
             <Icon size={18} /> <span className="nav-label">{label}</span>
           </NavLink>
         ))}

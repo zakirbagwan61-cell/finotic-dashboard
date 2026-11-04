@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import './App.css'
 import Sidebar from './components/layout/Sidebar'
 import Topbar from './components/layout/Topbar'
@@ -13,6 +14,8 @@ export default function App() {
   const [theme, setTheme] = useState(
     () => document.documentElement.getAttribute('data-theme') || 'light'
   )
+  const [menuOpen, setMenuOpen] = useState(false)
+  const { pathname } = useLocation()
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -27,9 +30,10 @@ export default function App() {
 
   return (
     <div className="app">
-      <Sidebar />
+      <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} key={pathname} />
+      {menuOpen && <div className="backdrop" onClick={() => setMenuOpen(false)} />}
       <div className="main">
-        <Topbar theme={theme} onToggleTheme={toggleTheme} />
+        <Topbar theme={theme} onToggleTheme={toggleTheme} onMenu={() => setMenuOpen(true)} />
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/accounts" element={<Accounts />} />
@@ -39,6 +43,10 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{ style: { background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--border)' } }}
+      />
     </div>
   )
 }
