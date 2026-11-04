@@ -1,9 +1,6 @@
-import { Wallet, TrendingUp, TrendingDown, PiggyBank, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight } from 'lucide-react'
 
-const icons = { 1: Wallet, 2: TrendingUp, 3: TrendingDown, 4: PiggyBank }
-
-export default function StatCard({ id, label, value, change, up }) {
-  const Icon = icons[id] || Wallet
+export default function StatCard({ icon: Icon, label, value, change, up }) {
   const Arrow = up ? ArrowUpRight : ArrowDownRight
   return (
     <div className="card stat">

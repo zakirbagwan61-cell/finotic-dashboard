@@ -1,9 +1,14 @@
+import { Wallet, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react'
 import StatCard from '../components/dashboard/StatCard'
 import BarChart from '../components/dashboard/BarChart'
 import TransactionTable from '../components/dashboard/TransactionTable'
-import { stats, monthly, transactions } from '../data/finance'
+import { useTransactions } from '../context/TransactionsContext'
+import { money } from '../utils/format'
 
 export default function Dashboard() {
+  const { transactions, stats, monthly } = useTransactions()
+  const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5)
+
   return (
     <main className="content">
       <div className="page-head">
@@ -11,11 +16,14 @@ export default function Dashboard() {
         <p>Welcome back, here's your financial overview.</p>
       </div>
       <div className="stats">
-        {stats.map(s => <StatCard key={s.id} {...s} />)}
+        <StatCard icon={Wallet} label="Total Balance" value={money(stats.balance)} change="Live balance" up />
+        <StatCard icon={TrendingUp} label="Income" value={money(stats.income)} change={`${stats.incomeCount} transactions`} up />
+        <StatCard icon={TrendingDown} label="Expenses" value={money(stats.expense)} change={`${stats.expenseCount} transactions`} up={false} />
+        <StatCard icon={PiggyBank} label="Savings" value={money(stats.savings)} change={`${stats.savingsRate}% of income`} up />
       </div>
       <div className="grid-2">
         <BarChart data={monthly} />
-        <TransactionTable rows={transactions} />
+        <TransactionTable rows={recent} />
       </div>
     </main>
   )

@@ -1,12 +1,23 @@
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, Bell, Moon, Sun } from 'lucide-react'
+import { useTransactions } from '../../context/TransactionsContext'
 
 export default function Topbar({ theme, onToggleTheme }) {
   const isDark = theme === 'dark'
+  const { search, setSearch } = useTransactions()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+
+  const onChange = (e) => {
+    setSearch(e.target.value)
+    if (e.target.value && pathname !== '/transactions') navigate('/transactions')
+  }
+
   return (
     <header className="topbar">
       <div className="search">
         <Search size={16} />
-        <input placeholder="Search transactions..." aria-label="Search" />
+        <input value={search} onChange={onChange} placeholder="Search transactions..." aria-label="Search" />
       </div>
       <div className="topbar-right">
         <button

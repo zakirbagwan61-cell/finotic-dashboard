@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import Sidebar from './components/layout/Sidebar'
 import Topbar from './components/layout/Topbar'
 import Dashboard from './pages/Dashboard'
+import Transactions from './pages/Transactions'
+import Accounts from './pages/Accounts'
+import Reports from './pages/Reports'
+import Settings from './pages/Settings'
 
 export default function App() {
   const [theme, setTheme] = useState(
@@ -25,7 +30,14 @@ export default function App() {
       <Sidebar />
       <div className="main">
         <Topbar theme={theme} onToggleTheme={toggleTheme} />
-        <Dashboard />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/accounts" element={<Accounts />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/settings" element={<Settings theme={theme} onToggleTheme={toggleTheme} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
     </div>
   )

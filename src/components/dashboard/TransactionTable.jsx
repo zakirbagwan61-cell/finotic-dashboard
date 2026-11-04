@@ -1,16 +1,13 @@
-const money = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-})
-
-const formatDate = iso =>
-  new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+import { Link } from 'react-router-dom'
+import { signed, fmtDate } from '../../utils/format'
 
 export default function TransactionTable({ rows }) {
   return (
     <div className="card">
-      <h3 className="card-title">Recent Transactions</h3>
+      <div className="card-head">
+        <h3 className="card-title">Recent Transactions</h3>
+        <Link to="/transactions" className="link">View all</Link>
+      </div>
       <div className="table-wrap">
         <table>
           <thead>
@@ -20,17 +17,16 @@ export default function TransactionTable({ rows }) {
             {rows.map(t => (
               <tr key={t.id}>
                 <td>{t.name}</td>
-                <td className="muted">{formatDate(t.date)}</td>
+                <td className="muted">{fmtDate(t.date)}</td>
                 <td>
-                  <span className={`badge ${t.status === 'Pending' ? 'pending' : 'done'}`}>
-                    {t.status}
+                  <span className={`badge ${t.status === 'pending' ? 'pending' : 'done'}`}>
+                    {t.status === 'pending' ? 'Pending' : 'Completed'}
                   </span>
                 </td>
-                <td className={`amount ${t.amount > 0 ? 'green' : 'red'}`}>
-                  {t.amount > 0 ? '+' : '-'}{money.format(Math.abs(t.amount))}
-                </td>
+                <td className={`amount ${t.type === 'income' ? 'green' : 'red'}`}>{signed(t)}</td>
               </tr>
             ))}
+            {!rows.length && <tr><td colSpan="4" className="empty">No transactions yet.</td></tr>}
           </tbody>
         </table>
       </div>
