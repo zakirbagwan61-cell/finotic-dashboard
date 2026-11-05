@@ -78,11 +78,11 @@ export default function Transactions() {
     e.target.value = ''
     if (!file) return
     const [head, ...body] = parseCsv(await file.text())
-    if (!head) return toast.error('File khali hai')
+    if (!head) return toast.error('The file is empty')
     const col = head.map((h) => h.trim().toLowerCase())
     const idx = (n) => col.indexOf(n)
     if (['name', 'type', 'date', 'amount'].some((n) => idx(n) < 0)) {
-      return toast.error('CSV mein Name, Type, Date, Amount columns chahiye')
+      return toast.error('CSV must include Name, Type, Date and Amount columns')
     }
     const get = (r, n) => (r[idx(n)] || '').trim()
     const list = []
@@ -101,10 +101,10 @@ export default function Transactions() {
         accountId: acc ? acc.id : accounts[0].id,
       })
     })
-    if (!list.length) return toast.error('Koi valid row nahi mili (date format YYYY-MM-DD hona chahiye)')
+    if (!list.length) return toast.error('No valid rows found (date format must be YYYY-MM-DD)')
     addMany(list)
     const skipped = body.length - list.length
-    toast.success(`${list.length} transactions import hue${skipped ? `, ${skipped} skip` : ''}`)
+    toast.success(`${list.length} transactions imported${skipped ? `, ${skipped} skipped` : ''}`)
   }
 
   return (

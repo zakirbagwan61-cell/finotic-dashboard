@@ -13,10 +13,10 @@ function GoalCard({ goal }) {
   const fund = (e) => {
     e.preventDefault()
     const v = parseFloat(amt)
-    if (!(v > 0)) return toast.error('Amount 0 se zyada hona chahiye')
+    if (!(v > 0)) return toast.error('Amount must be greater than 0')
     fundGoal(goal.id, v)
     setAmt('')
-    toast.success(`${money(v)} add ho gaye`)
+    toast.success(`${money(v)} added`)
   }
 
   return (
@@ -49,8 +49,8 @@ export default function Goals() {
     e.preventDefault()
     const t = parseFloat(target)
     const s = parseFloat(saved) || 0
-    if (!name.trim()) return toast.error('Goal ka naam likho')
-    if (!(t > 0)) return toast.error('Target 0 se zyada hona chahiye')
+    if (!name.trim()) return toast.error('Please enter a goal name')
+    if (!(t > 0)) return toast.error('Target must be greater than 0')
     addGoal({ name: name.trim(), target: t, saved: Math.max(s, 0) })
     setName(''); setTarget(''); setSaved('')
     toast.success('Goal added')
@@ -60,7 +60,8 @@ export default function Goals() {
     <main className="content">
       <div className="page-head">
         <h1>Savings Goals</h1>
-        <p>Apne goals set karo aur progress track karo.</p>
+        <p>Set your goals and track your progress.
+</p>
       </div>
 
       <form className="card inline-form" onSubmit={submit}>
@@ -72,7 +73,7 @@ export default function Goals() {
 
       <div className="goal-grid">
         {goals.map((g) => <GoalCard key={g.id} goal={g} />)}
-        {!goals.length && <p className="empty">Abhi koi goal nahi hai.</p>}
+        {!goals.length && <p className="empty">No goals yet.</p>}
       </div>
     </main>
   )

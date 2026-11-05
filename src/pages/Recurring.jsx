@@ -17,19 +17,19 @@ export default function Recurring() {
     e.preventDefault()
     const amount = parseFloat(f.amount)
     const day = parseInt(f.day, 10)
-    if (!f.name.trim()) return toast.error('Naam likho')
-    if (!(amount > 0)) return toast.error('Amount 0 se zyada hona chahiye')
-    if (!(day >= 1 && day <= 28)) return toast.error('Din 1 se 28 ke beech rakho')
+    if (!f.name.trim()) return toast.error('Please enter a name')
+    if (!(amount > 0)) return toast.error('Amount must be greater than 0')
+    if (!(day >= 1 && day <= 28)) return toast.error('Day must be between 1 and 28')
     addRecurring({ name: f.name.trim(), amount, type: f.type, category: f.category, accountId: f.accountId, day })
     setF({ ...f, name: '', amount: '' })
-    toast.success('Recurring rule add ho gaya')
+    toast.success('Recurring rule added')
   }
 
   return (
     <main className="content">
       <div className="page-head">
         <h1>Recurring</h1>
-        <p>Rent, Netflix, salary jaise har mahine ke transactions apne aap add hote hain (app kholne par).</p>
+        <p>Rent, Netflix, salary and other monthly transactions are added automatically when you open the app.</p>
       </div>
 
       <form className="card inline-form" onSubmit={submit}>
@@ -45,7 +45,7 @@ export default function Recurring() {
         <select value={f.accountId} onChange={set('accountId')}>
           {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
-        <input type="number" min="1" max="28" value={f.day} onChange={set('day')} aria-label="Day of month" title="Mahine ka din (1-28)" />
+        <input type="number" min="1" max="28" value={f.day} onChange={set('day')} aria-label="Day of month" title="Day of month (1-28)" />
         <button className="btn btn-primary" type="submit">Add rule</button>
       </form>
 
@@ -59,7 +59,7 @@ export default function Recurring() {
                   <td>{r.name}</td>
                   <td className="muted">{r.category}</td>
                   <td className="muted">{accName(r.accountId)}</td>
-                  <td className="muted">Har mahine {r.day}</td>
+                  <td className="muted">Every month on day {r.day}</td>
                   <td className={`amount ${r.type === 'income' ? 'green' : 'red'}`}>{(r.type === 'income' ? '+' : '-') + money(r.amount)}</td>
                   <td>
                     <div className="row-actions">
@@ -68,7 +68,7 @@ export default function Recurring() {
                   </td>
                 </tr>
               ))}
-              {!recurring.length && <tr><td colSpan="6" className="empty">Koi recurring rule nahi hai.</td></tr>}
+              {!recurring.length && <tr><td colSpan="6" className="empty">No recurring rules yet.</td></tr>}
             </tbody>
           </table>
         </div>

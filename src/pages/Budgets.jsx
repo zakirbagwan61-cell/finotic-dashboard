@@ -15,7 +15,7 @@ export default function Budgets() {
   const submit = (e) => {
     e.preventDefault()
     const v = parseFloat(limit)
-    if (!(v > 0)) return toast.error('Limit 0 se zyada honi chahiye')
+    if (!(v > 0)) return toast.error('Limit must be greater than 0')
     setBudget(category, v)
     setLimit('')
     toast.success('Budget saved')
@@ -25,7 +25,7 @@ export default function Budgets() {
     <main className="content">
       <div className="page-head">
         <h1>Budgets</h1>
-        <p>Is mahine ki category-wise spending limits.</p>
+        <p>Category-wise spending limits for this month.</p>
       </div>
 
       <form className="card inline-form" onSubmit={submit}>
@@ -52,7 +52,7 @@ export default function Budgets() {
               </div>
             </div>
           ))}
-          {!budgetUsage.length && <p className="empty">Koi budget set nahi hai.</p>}
+          {!budgetUsage.length && <p className="empty">No budgets set yet.</p>}
         </div>
       </div>
     </main>

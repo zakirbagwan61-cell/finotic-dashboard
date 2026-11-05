@@ -20,8 +20,8 @@ function AccountForm({ editing, onDone }) {
   const submit = (e) => {
     e.preventDefault()
     const opening = parseFloat(f.opening)
-    if (!f.name.trim()) return toast.error('Account ka naam likho')
-    if (Number.isNaN(opening)) return toast.error('Opening balance number hona chahiye')
+    if (!f.name.trim()) return toast.error('Please enter an account name')
+    if (Number.isNaN(opening)) return toast.error('Opening balance must be a number')
     const data = { name: f.name.trim(), type: f.type, opening }
     if (editing) { updateAccount(editing.id, data); toast.success('Account updated') }
     else { addAccount(data); toast.success('Account added') }
@@ -59,8 +59,8 @@ function TransferForm({ onDone }) {
   const submit = (e) => {
     e.preventDefault()
     const amount = parseFloat(f.amount)
-    if (f.from === f.to) return toast.error('From aur To alag account hone chahiye')
-    if (!(amount > 0)) return toast.error('Amount 0 se zyada hona chahiye')
+    if (f.from === f.to) return toast.error('')
+    if (!(amount > 0)) return toast.error('Amount must be greater than 0')
     addTransfer({ from: f.from, to: f.to, amount, date: f.date })
     toast.success('Transfer ho gaya')
     onDone()
@@ -100,7 +100,7 @@ export default function Accounts() {
   const handleDelete = (a) => {
     if (!window.confirm(`Delete "${a.name}"?`)) return
     if (!removeAccount(a.id)) {
-      toast.error('Ye account delete nahi ho sakta (transactions/transfers jude hain ya ye akela account hai)')
+      toast.error('This account cannot be deleted (it has transactions or transfers, or it is your only account)')
     } else toast.success('Account deleted')
   }
 
@@ -152,7 +152,7 @@ export default function Accounts() {
               <b>{money(t.amount)}</b>
             </li>
           ))}
-          {!transfers.length && <li className="empty">Abhi koi transfer nahi hua.</li>}
+          {!transfers.length && <li className="empty">No transfers yet.</li>}
         </ul>
       </div>
 

@@ -38,18 +38,18 @@ export default function NotificationsMenu() {
     transactions
       .filter((t) => t.status === 'pending')
       .forEach((t) =>
-        list.push({ id: `pending-${t.id}`, icon: Clock, title: `Pending: ${t.name}`, text: `${money(t.amount)} abhi complete nahi hua`, to: '/transactions' })
+        list.push({ id: `pending-${t.id}`, icon: Clock, title: `Pending: ${t.name}`, text: `${money(t.amount)} is not completed yet`, to: '/transactions' })
       )
     budgetUsage.forEach((b) => {
       if (b.pct >= 100)
-        list.push({ id: `budget-over-${b.category}-${mk}`, icon: AlertTriangle, title: `${b.category} budget cross ho gaya`, text: `${money(b.spent)} / ${money(b.limit)}`, to: '/budgets' })
+        list.push({ id: `budget-over-${b.category}-${mk}`, icon: AlertTriangle, title: `${b.category} budget exceeded`, text: `${money(b.spent)} / ${money(b.limit)}`, to: '/budgets' })
       else if (b.pct >= 80)
-        list.push({ id: `budget-near-${b.category}-${mk}`, icon: AlertTriangle, title: `${b.category} budget ${b.pct}% use ho chuka`, text: `${money(b.spent)} / ${money(b.limit)}`, to: '/budgets' })
+        list.push({ id: `budget-near-${b.category}-${mk}`, icon: AlertTriangle, title: `${b.category} budget ${b.pct}% used`, text: `${money(b.spent)} / ${money(b.limit)}`, to: '/budgets' })
     })
     goals
       .filter((g) => g.saved >= g.target)
       .forEach((g) =>
-        list.push({ id: `goal-${g.id}`, icon: Target, title: `Goal complete: ${g.name}`, text: `${money(g.saved)} save ho gaye`, to: '/goals' })
+        list.push({ id: `goal-${g.id}`, icon: Target, title: `Goal complete: ${g.name}`, text: `${money(g.saved)} saved`, to: '/goals' })
       )
     return list
   }, [transactions, budgetUsage, goals])

@@ -26,7 +26,7 @@ export default function Settings({ theme, onToggleTheme }) {
           <li>
             <span>
               Count pending transactions in totals
-              <br /><small className="muted">Off: sirf Completed transactions balance/income/expenses mein judte hain</small>
+              <br /><small className="muted">Off: only Completed transactions count toward balance, income and expenses</small>
             </span>
             <input type="checkbox" checked={settings.countPending} onChange={(e) => updateSettings({ countPending: e.target.checked })} />
           </li>
