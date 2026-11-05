@@ -3,16 +3,23 @@ import { Plus, Save, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { CATEGORIES } from '../data/finance'
 import { useTransactions } from '../context/TransactionsContext'
+import { toISODate } from '../utils/format'
 
-const today = () => new Date().toISOString().slice(0, 10)
-const blank = () => ({ name: '', amount: '', type: 'expense', category: 'Food', date: today() })
+const blank = (accountId) => ({
+  name: '', amount: '', type: 'expense', category: 'Food',
+  accountId, date: toISODate(), status: 'completed',
+})
 
 export default function TransactionForm({ editing, onDone }) {
-  const { add, update } = useTransactions()
-  const [f, setF] = useState(
+  const { add, update, accounts } = useTransactions()
+  const [f, setF] = useState(() =>
     editing
-      ? { name: editing.name, amount: String(editing.amount), type: editing.type, category: editing.category, date: editing.date }
-      : blank()
+      ? {
+          name: editing.name, amount: String(editing.amount), type: editing.type,
+          category: editing.category, accountId: editing.accountId,
+          date: editing.date, status: editing.status,
+        }
+      : blank(accounts[0]?.id)
   )
   const [errors, setErrors] = useState({})
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value })
@@ -33,37 +40,55 @@ export default function TransactionForm({ editing, onDone }) {
     if (editing) {
       update(editing.id, data)
       toast.success('Transaction updated')
-      onDone?.()
     } else {
-      add({ ...data, status: 'completed' })
+      add(data)
       toast.success('Transaction added')
-      setF(blank())
     }
+    onDone?.()
   }
 
   return (
-    <form className="card form-grid" onSubmit={submit} noValidate>
-      <input className={errors.name ? 'invalid' : ''} placeholder="Name (e.g. Coffee)" value={f.name} onChange={set('name')} />
-      <input className={errors.amount ? 'invalid' : ''} type="number" step="0.01" placeholder="Amount" value={f.amount} onChange={set('amount')} />
-      <select value={f.type} onChange={set('type')}>
-        <option value="expense">Expense</option>
-        <option value="income">Income</option>
-      </select>
-      <select value={f.category} onChange={set('category')}>
-        {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-      </select>
-      <input className={errors.date ? 'invalid' : ''} type="date" value={f.date} onChange={set('date')} />
-      <div className="form-actions">
-        <button className="btn btn-primary" type="submit">
-          {editing ? <><Save size={16} /> Save</> : <><Plus size={16} /> Add</>}
-        </button>
-        {editing && (
-          <button className="btn" type="button" onClick={onDone}><X size={16} /> Cancel</button>
-        )}
-      </div>
+    <form className="modal-form" onSubmit={submit} noValidate>
+      <label className="full">Name
+        <input className={errors.name ? 'invalid' : ''} placeholder="e.g. Coffee" value={f.name} onChange={set('name')} autoFocus />
+      </label>
+      <label>Amount
+        <input className={errors.amount ? 'invalid' : ''} type="number" step="0.01" placeholder="0.00" value={f.amount} onChange={set('amount')} />
+      </label>
+      <label>Type
+        <select value={f.type} onChange={set('type')}>
+          <option value="expense">Expense</option>
+          <option value="income">Income</option>
+        </select>
+      </label>
+      <label>Category
+        <select value={f.category} onChange={set('category')}>
+          {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+        </select>
+      </label>
+      <label>Account
+        <select value={f.accountId} onChange={set('accountId')}>
+          {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+        </select>
+      </label>
+      <label>Date
+        <input className={errors.date ? 'invalid' : ''} type="date" value={f.date} onChange={set('date')} />
+      </label>
+      <label>Status
+        <select value={f.status} onChange={set('status')}>
+          <option value="completed">Completed</option>
+          <option value="pending">Pending</option>
+        </select>
+      </label>
       {Object.values(errors).length > 0 && (
         <p className="form-error">{Object.values(errors).join(' · ')}</p>
       )}
+      <div className="form-actions full">
+        <button className="btn btn-primary" type="submit">
+          {editing ? <><Save size={16} /> Save</> : <><Plus size={16} /> Add</>}
+        </button>
+        <button className="btn" type="button" onClick={onDone}><X size={16} /> Cancel</button>
+      </div>
     </form>
   )
 }

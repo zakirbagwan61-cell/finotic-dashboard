@@ -1,10 +1,15 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Wallet, ArrowLeftRight, PieChart, Settings } from 'lucide-react'
+import {
+  LayoutDashboard, Wallet, ArrowLeftRight, PieChart, Settings, Target, PiggyBank, Repeat,
+} from 'lucide-react'
 
 const links = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/accounts', icon: Wallet, label: 'Accounts' },
   { to: '/transactions', icon: ArrowLeftRight, label: 'Transactions' },
+  { to: '/budgets', icon: Target, label: 'Budgets' },
+  { to: '/goals', icon: PiggyBank, label: 'Goals' },
+  { to: '/recurring', icon: Repeat, label: 'Recurring' },
   { to: '/reports', icon: PieChart, label: 'Reports' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]

@@ -6,8 +6,12 @@ import { useTransactions } from '../context/TransactionsContext'
 import { money } from '../utils/format'
 
 export default function Dashboard() {
-  const { transactions, stats, monthly } = useTransactions()
+  const { transactions, stats, monthly, settings } = useTransactions()
   const recent = [...transactions].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5)
+
+  const balanceNote = stats.pendingCount
+    ? `${stats.pendingCount} pending ${settings.countPending ? 'included' : 'not counted'}`
+    : 'Live balance'
 
   return (
     <main className="content">
@@ -16,7 +20,7 @@ export default function Dashboard() {
         <p>Welcome back, here's your financial overview.</p>
       </div>
       <div className="stats">
-        <StatCard icon={Wallet} label="Total Balance" value={money(stats.balance)} change="Live balance" up />
+        <StatCard icon={Wallet} label="Total Balance" value={money(stats.balance)} change={balanceNote} up />
         <StatCard icon={TrendingUp} label="Income" value={money(stats.income)} change={`${stats.incomeCount} transactions`} up />
         <StatCard icon={TrendingDown} label="Expenses" value={money(stats.expense)} change={`${stats.expenseCount} transactions`} up={false} />
         <StatCard icon={PiggyBank} label="Savings" value={money(stats.savings)} change={`${stats.savingsRate}% of income`} up />

@@ -7,8 +7,12 @@ import Topbar from './components/layout/Topbar'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Accounts from './pages/Accounts'
+import Budgets from './pages/Budgets'
+import Goals from './pages/Goals'
+import Recurring from './pages/Recurring'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
+import { useTransactions } from './context/TransactionsContext'
 
 export default function App() {
   const [theme, setTheme] = useState(
@@ -16,6 +20,7 @@ export default function App() {
   )
   const [menuOpen, setMenuOpen] = useState(false)
   const { pathname } = useLocation()
+  const { setSearch } = useTransactions()
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -25,6 +30,11 @@ export default function App() {
       // storage unavailable, theme just won't persist
     }
   }, [theme])
+
+  // Transactions page chhodte hi search saaf ho jaye
+  useEffect(() => {
+    if (pathname !== '/transactions') setSearch('')
+  }, [pathname, setSearch])
 
   const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'))
 
@@ -38,6 +48,9 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/accounts" element={<Accounts />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/budgets" element={<Budgets />} />
+          <Route path="/goals" element={<Goals />} />
+          <Route path="/recurring" element={<Recurring />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings theme={theme} onToggleTheme={toggleTheme} />} />
           <Route path="*" element={<Navigate to="/" replace />} />

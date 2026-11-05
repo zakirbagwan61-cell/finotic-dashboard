@@ -1,12 +1,31 @@
+import { toISODate } from '../utils/format'
+
 const daysAgo = (n) => {
   const d = new Date()
   d.setDate(d.getDate() - n)
-  return d.toISOString().slice(0, 10)
+  return toISODate(d)
 }
 
-export const OPENING_BALANCE = 15000
+export const MAIN_ACCOUNT = 'acc-main'
+export const ACCOUNT_TYPES = ['checking', 'savings', 'card', 'cash']
 
 export const CATEGORIES = ['Salary', 'Freelance', 'Food', 'Shopping', 'Bills', 'Entertainment', 'Transport', 'Other']
+
+export const DEFAULT_ACCOUNTS = [
+  { id: 'acc-main', name: 'Main Checking', type: 'checking', opening: 15000 },
+  { id: 'acc-savings', name: 'Savings', type: 'savings', opening: 0 },
+  { id: 'acc-card', name: 'Credit Card', type: 'card', opening: 0 },
+]
+
+export const DEFAULT_BUDGETS = [
+  { id: 'b1', category: 'Food', limit: 300 },
+  { id: 'b2', category: 'Shopping', limit: 250 },
+  { id: 'b3', category: 'Entertainment', limit: 100 },
+]
+
+export const DEFAULT_GOALS = [
+  { id: 'g1', name: 'New Laptop', target: 1500, saved: 400 },
+]
 
 export const SEED = [
   { id: 's1',  name: 'Salary',           amount: 4200,  type: 'income',  category: 'Salary',        date: daysAgo(3),   status: 'completed' },

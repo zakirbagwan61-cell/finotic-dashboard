@@ -200,3 +200,70 @@ td.amount { font-weight: 600; font-variant-numeric: tabular-nums; }
   .search { width: 100%; }
   .topbar-left { flex: 1; }
 }
+
+/* ---------- Phase 2: modal, filters, notifications, charts, new pages ---------- */
+.page-head-row { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--s3); flex-wrap: wrap; }
+
+.modal-form input, .modal-form select,
+.filters input, .filters select,
+.inline-form input, .inline-form select, .text-input {
+  padding: 10px 12px; font: inherit; font-size: 14px;
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid transparent; border-radius: 10px; outline: none; min-width: 0;
+}
+.modal-form input:focus, .modal-form select:focus,
+.filters input:focus, .filters select:focus,
+.inline-form input:focus, .inline-form select:focus, .text-input:focus { border-color: var(--primary); }
+.modal-form input.invalid { border-color: var(--red); }
+
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: grid; place-items: center; z-index: 50; padding: var(--s4); }
+.modal { width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-md); }
+.modal-form { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); margin-top: var(--s4); }
+.modal-form label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.modal-form .full { grid-column: 1 / -1; }
+@media (max-width: 520px) { .modal-form { grid-template-columns: 1fr; } }
+
+.filters { display: flex; gap: var(--s3); flex-wrap: wrap; align-items: center; }
+.pagination { display: flex; justify-content: center; align-items: center; gap: var(--s4); margin-top: var(--s4); }
+
+.inline-form { display: flex; gap: var(--s3); flex-wrap: wrap; align-items: center; }
+.inline-form input { flex: 1; min-width: 120px; }
+.inline-form input[type='number'][max='28'] { flex: 0 0 80px; min-width: 80px; }
+.inline-icon { display: inline-grid; width: 24px; height: 24px; margin-left: var(--s2); vertical-align: middle; }
+
+.progress > div.warn { background: var(--amber); }
+.progress > div.over { background: var(--red); }
+
+.goal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s4); }
+.goal-amount { margin: var(--s2) 0 var(--s3); }
+.goal-fund { margin-top: var(--s4); }
+
+/* notifications */
+.notif-wrap { position: relative; }
+.notif-wrap .icon-btn { position: relative; }
+.notif-badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 4px; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; background: var(--red); border-radius: 999px; }
+.notif-panel { position: absolute; right: 0; top: 46px; width: min(340px, 86vw); padding: var(--s4); z-index: 40; box-shadow: var(--shadow-md); }
+.notif-clear { background: none; border: none; }
+.notif-list { display: flex; flex-direction: column; gap: var(--s1); margin-top: var(--s3); max-height: 320px; overflow-y: auto; }
+.notif-item { display: flex; gap: var(--s3); align-items: flex-start; text-align: left; width: 100%; padding: 10px; background: var(--primary-soft); border: none; border-radius: 10px; }
+.notif-item.read { background: transparent; opacity: .7; }
+.notif-item span { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+.notif-item small { font-size: 12px; }
+
+/* charts */
+.donut-wrap { display: flex; gap: var(--s5); align-items: center; flex-wrap: wrap; margin-top: var(--s4); }
+.donut { width: 150px; height: 150px; flex: none; }
+.donut-wrap .cat-list { flex: 1; min-width: 180px; margin-top: 0; gap: var(--s2); }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+.pair { flex: 1; width: 100%; display: flex; align-items: flex-end; gap: 4px; }
+.pair .bar { flex: 1; width: auto; opacity: .85; }
+.bar.income { background: var(--green); }
+.bar.expense { background: var(--red); }
+
+/* print / PDF */
+@media print {
+  .sidebar, .topbar, .no-print, .backdrop, .notif-wrap { display: none !important; }
+  .app { display: block; }
+  body { background: #fff; }
+  .card { box-shadow: none; break-inside: avoid; }
+}
