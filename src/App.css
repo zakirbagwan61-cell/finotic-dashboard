@@ -267,3 +267,15 @@ td.amount { font-weight: 600; font-variant-numeric: tabular-nums; }
   body { background: #fff; }
   .card { box-shadow: none; break-inside: avoid; }
 }
+
+/* profile menu */
+.profile-wrap { position: relative; }
+.avatar-btn { border: none; cursor: pointer; }
+.profile-panel { position: absolute; right: 0; top: 48px; width: min(300px, 86vw); padding: var(--s4); z-index: 40; box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: var(--s3); }
+.profile-head { display: flex; align-items: center; gap: var(--s3); }
+.profile-head > div:last-child { display: flex; flex-direction: column; min-width: 0; }
+.profile-head small { overflow: hidden; text-overflow: ellipsis; }
+.profile-field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.profile-field .text-input { width: 100%; }
+.profile-actions { display: flex; gap: var(--s2); }
+.profile-actions .btn { flex: 1; justify-content: center; }

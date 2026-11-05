@@ -14,7 +14,7 @@ const K = {
   settings: 'finotic-settings',
 }
 
-const DEFAULT_SETTINGS = { currency: 'USD', countPending: false, name: 'Rehan' }
+const DEFAULT_SETTINGS = { currency: 'USD', countPending: false, name: 'Rehan', email: '' }
 
 const uid = () => Date.now() + '-' + Math.random().toString(36).slice(2, 7)
 const sum = (list, type) =>

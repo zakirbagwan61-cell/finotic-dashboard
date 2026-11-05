@@ -2,10 +2,11 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, Moon, Sun, Menu } from 'lucide-react'
 import { useTransactions } from '../../context/TransactionsContext'
 import NotificationsMenu from './NotificationsMenu'
+import ProfileMenu from './ProfileMenu'
 
 export default function Topbar({ theme, onToggleTheme, onMenu }) {
   const isDark = theme === 'dark'
-  const { search, setSearch, settings } = useTransactions()
+  const { search, setSearch } = useTransactions()
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
@@ -13,8 +14,6 @@ export default function Topbar({ theme, onToggleTheme, onMenu }) {
     setSearch(e.target.value)
     if (e.target.value && pathname !== '/transactions') navigate('/transactions')
   }
-
-  const initial = (settings.name || 'R').trim().charAt(0).toUpperCase() || 'R'
 
   return (
     <header className="topbar">
@@ -36,7 +35,7 @@ export default function Topbar({ theme, onToggleTheme, onMenu }) {
           {isDark ? <Sun size={18} /> : <Moon size={18} />}
         </button>
         <NotificationsMenu />
-        <div className="avatar" title={settings.name}>{initial}</div>
+        <ProfileMenu theme={theme} onToggleTheme={onToggleTheme} />
       </div>
     </header>
   )
