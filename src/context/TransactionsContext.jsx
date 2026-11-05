@@ -29,7 +29,7 @@ function read(key, fallback) {
   }
 }
 
-// Is mahine jo recurring rule due hai aur abhi tak nahi chala, uski transaction bana do
+// Create this month's transaction for each recurring rule that is due and hasn't run yet
 function applyRecurring(transactions, recurring) {
   const now = new Date()
   const key = monthKey(now)
@@ -45,7 +45,7 @@ function applyRecurring(transactions, recurring) {
   return { transactions: added.length ? [...added, ...transactions] : transactions, recurring: rules }
 }
 
-// Pure function: localStorage se data padhta hai (StrictMode mein 2 baar chale to bhi safe)
+// Pure function: reads data from localStorage (safe even if StrictMode runs it twice)
 function bootstrap() {
   const tx = read(K.tx, SEED).map((t) => ({ ...t, accountId: t.accountId || MAIN_ACCOUNT }))
   const applied = applyRecurring(tx, read(K.recurring, []))
@@ -79,8 +79,9 @@ export function TransactionsProvider({ children }) {
   const [recurring, setRecurring] = usePersisted(K.recurring, init.recurring)
   const [settings, setSettings] = usePersisted(K.settings, init.settings)
   const [search, setSearch] = useState('')
+  const [txModal, setTxModal] = useState(null) // null | { editing: tx | null }
 
-  // money() ko currency pata honi chahiye (render se pehle set hota hai)
+  // money() needs to know the currency (set before render)
   setFormatCurrency(settings.currency)
 
   // ---- transactions ----
@@ -89,8 +90,12 @@ export function TransactionsProvider({ children }) {
   const addMany = (list) =>
     setTransactions((p) => [...list.map((t) => ({ ...t, id: uid() })), ...p])
   const remove = (id) => setTransactions((p) => p.filter((t) => t.id !== id))
+  const removeMany = (ids) => setTransactions((p) => p.filter((t) => !ids.includes(t.id)))
   const update = (id, patch) =>
     setTransactions((p) => p.map((t) => (t.id === id ? { ...t, ...patch } : t)))
+  const updateMany = (ids, patch) =>
+    setTransactions((p) => p.map((t) => (ids.includes(t.id) ? { ...t, ...patch } : t)))
+  const restore = (items) => setTransactions((p) => [...items, ...p]) // undo delete (keeps original ids)
   const toggleStatus = (id) =>
     setTransactions((p) =>
       p.map((t) => (t.id === id ? { ...t, status: t.status === 'completed' ? 'pending' : 'completed' } : t))
@@ -129,7 +134,7 @@ export function TransactionsProvider({ children }) {
   const addRecurring = (r) =>
     setRecurring((p) => [
       ...p,
-      // Agar is mahine ka din nikal chuka hai to pehla run agle mahine hoga
+      // If this month's day has already passed, the first run happens next month
       { ...r, id: uid(), lastRun: new Date().getDate() >= r.day ? monthKey() : '' },
     ])
   const removeRecurring = (id) => setRecurring((p) => p.filter((r) => r.id !== id))
@@ -147,6 +152,28 @@ export function TransactionsProvider({ children }) {
   const clearAll = () => {
     setTransactions([])
     setTransfers([])
+  }
+
+  // ---- backup / restore ----
+  const exportData = () => ({
+    version: 1, transactions, accounts, transfers, budgets, goals, recurring, settings,
+  })
+  const importData = (d) => {
+    const isArr = Array.isArray
+    const validTx =
+      d && isArr(d.transactions) &&
+      d.transactions.every(
+        (t) => t && typeof t.amount === 'number' && typeof t.date === 'string' && ['income', 'expense'].includes(t.type)
+      )
+    if (!validTx || !isArr(d.accounts) || d.accounts.length === 0) return false
+    setTransactions(d.transactions.map((t) => ({ ...t, accountId: t.accountId || MAIN_ACCOUNT })))
+    setAccounts(d.accounts)
+    setTransfers(isArr(d.transfers) ? d.transfers : [])
+    setBudgets(isArr(d.budgets) ? d.budgets : [])
+    setGoals(isArr(d.goals) ? d.goals : [])
+    setRecurring(isArr(d.recurring) ? d.recurring : [])
+    setSettings({ ...DEFAULT_SETTINGS, ...(d.settings || {}) })
+    return true
   }
 
   // ---- derived ----
@@ -212,12 +239,13 @@ export function TransactionsProvider({ children }) {
   }, [budgets, counted])
 
   const value = {
-    transactions, counted, search, setSearch, add, addMany, update, remove, toggleStatus,
+    transactions, counted, search, setSearch, txModal, setTxModal,
+    add, addMany, update, updateMany, remove, removeMany, restore, toggleStatus,
     accounts, balances, transfers, addAccount, updateAccount, removeAccount, addTransfer,
     budgets, budgetUsage, setBudget, removeBudget,
     goals, addGoal, fundGoal, removeGoal,
     recurring, addRecurring, removeRecurring,
-    settings, updateSettings, resetDemo, clearAll,
+    settings, updateSettings, resetDemo, clearAll, exportData, importData,
     stats, monthly,
   }
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import CategoryBadge from '../CategoryBadge'
 import { signed, fmtDate } from '../../utils/format'
 
 export default function TransactionTable({ rows }) {
@@ -16,7 +17,12 @@ export default function TransactionTable({ rows }) {
           <tbody>
             {rows.map(t => (
               <tr key={t.id}>
-                <td>{t.name}</td>
+                <td>
+                  <span className="name-cell">
+                    <CategoryBadge category={t.category} iconOnly />
+                    {t.name}
+                  </span>
+                </td>
                 <td className="muted">{fmtDate(t.date)}</td>
                 <td>
                   <span className={`badge ${t.status === 'pending' ? 'pending' : 'done'}`}>

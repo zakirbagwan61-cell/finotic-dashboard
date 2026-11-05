@@ -4,6 +4,9 @@ import { Toaster } from 'react-hot-toast'
 import './App.css'
 import Sidebar from './components/layout/Sidebar'
 import Topbar from './components/layout/Topbar'
+import Modal from './components/Modal'
+import TransactionForm from './components/TransactionForm'
+import CommandPalette from './components/CommandPalette'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Accounts from './pages/Accounts'
@@ -19,8 +22,12 @@ export default function App() {
     () => document.documentElement.getAttribute('data-theme') || 'light'
   )
   const [menuOpen, setMenuOpen] = useState(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(() => {
+    try { return localStorage.getItem('finotic-collapsed') === '1' } catch { return false }
+  })
   const { pathname } = useLocation()
-  const { setSearch } = useTransactions()
+  const { setSearch, txModal, setTxModal } = useTransactions()
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -31,19 +38,46 @@ export default function App() {
     }
   }, [theme])
 
-  // Transactions page chhodte hi search saaf ho jaye
+  useEffect(() => {
+    try { localStorage.setItem('finotic-collapsed', collapsed ? '1' : '0') } catch { /* ignore */ }
+  }, [collapsed])
+
+  // Clear the search when leaving the Transactions page
   useEffect(() => {
     if (pathname !== '/transactions') setSearch('')
   }, [pathname, setSearch])
+
+  // Ctrl+K / Cmd+K opens the command palette
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPaletteOpen((o) => !o)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'))
 
   return (
     <div className="app">
-      <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} key={pathname} />
+      <Sidebar
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        collapsed={collapsed}
+        onToggleCollapse={() => setCollapsed((c) => !c)}
+        key={pathname}
+      />
       {menuOpen && <div className="backdrop" onClick={() => setMenuOpen(false)} />}
       <div className="main">
-        <Topbar theme={theme} onToggleTheme={toggleTheme} onMenu={() => setMenuOpen(true)} />
+        <Topbar
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onMenu={() => setMenuOpen(true)}
+          onPalette={() => setPaletteOpen(true)}
+        />
         <div className="page-anim" key={pathname}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -58,6 +92,21 @@ export default function App() {
           </Routes>
         </div>
       </div>
+
+      {paletteOpen && (
+        <CommandPalette onClose={() => setPaletteOpen(false)} theme={theme} onToggleTheme={toggleTheme} />
+      )}
+
+      {txModal && (
+        <Modal title={txModal.editing ? 'Edit Transaction' : 'Add Transaction'} onClose={() => setTxModal(null)}>
+          <TransactionForm
+            key={txModal.editing?.id || 'new'}
+            editing={txModal.editing}
+            onDone={() => setTxModal(null)}
+          />
+        </Modal>
+      )}
+
       <Toaster
         position="bottom-right"
         toastOptions={{ style: { background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--border)' } }}

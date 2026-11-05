@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Moon, Sun, Menu } from 'lucide-react'
+import { Search, Moon, Sun, Menu, Plus, Command } from 'lucide-react'
 import { useTransactions } from '../../context/TransactionsContext'
 import NotificationsMenu from './NotificationsMenu'
 import ProfileMenu from './ProfileMenu'
 
-export default function Topbar({ theme, onToggleTheme, onMenu }) {
+export default function Topbar({ theme, onToggleTheme, onMenu, onPalette }) {
   const isDark = theme === 'dark'
-  const { search, setSearch } = useTransactions()
+  const { search, setSearch, setTxModal } = useTransactions()
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
@@ -27,6 +27,17 @@ export default function Topbar({ theme, onToggleTheme, onMenu }) {
         </div>
       </div>
       <div className="topbar-right">
+        <button className="btn btn-primary btn-add" onClick={() => setTxModal({ editing: null })}>
+          <Plus size={16} /><span>Add</span>
+        </button>
+        <button
+          className="icon-btn"
+          onClick={onPalette}
+          aria-label="Open command palette"
+          title="Command palette (Ctrl+K)"
+        >
+          <Command size={18} />
+        </button>
         <button
           className="icon-btn"
           onClick={onToggleTheme}

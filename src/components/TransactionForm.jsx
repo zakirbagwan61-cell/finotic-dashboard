@@ -7,7 +7,7 @@ import { toISODate } from '../utils/format'
 
 const blank = (accountId) => ({
   name: '', amount: '', type: 'expense', category: 'Food',
-  accountId, date: toISODate(), status: 'completed',
+  accountId, date: toISODate(), status: 'completed', tags: '', note: '',
 })
 
 export default function TransactionForm({ editing, onDone }) {
@@ -18,6 +18,7 @@ export default function TransactionForm({ editing, onDone }) {
           name: editing.name, amount: String(editing.amount), type: editing.type,
           category: editing.category, accountId: editing.accountId,
           date: editing.date, status: editing.status,
+          tags: (editing.tags || []).join(', '), note: editing.note || '',
         }
       : blank(accounts[0]?.id)
   )
@@ -36,7 +37,13 @@ export default function TransactionForm({ editing, onDone }) {
   const submit = (e) => {
     e.preventDefault()
     if (!validate()) return
-    const data = { ...f, name: f.name.trim(), amount: parseFloat(f.amount) }
+    const data = {
+      ...f,
+      name: f.name.trim(),
+      amount: parseFloat(f.amount),
+      note: f.note.trim(),
+      tags: f.tags.split(',').map((s) => s.trim().replace(/^#/, '')).filter(Boolean),
+    }
     if (editing) {
       update(editing.id, data)
       toast.success('Transaction updated')
@@ -79,6 +86,12 @@ export default function TransactionForm({ editing, onDone }) {
           <option value="completed">Completed</option>
           <option value="pending">Pending</option>
         </select>
+      </label>
+      <label className="full">Tags (comma separated)
+        <input placeholder="e.g. trip, work" value={f.tags} onChange={set('tags')} />
+      </label>
+      <label className="full">Notes
+        <textarea rows="3" placeholder="Anything to remember about this transaction" value={f.note} onChange={set('note')} />
       </label>
       {Object.values(errors).length > 0 && (
         <p className="form-error">{Object.values(errors).join(' · ')}</p>
