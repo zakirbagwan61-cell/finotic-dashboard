@@ -3,7 +3,12 @@ import StatCard from '../components/dashboard/StatCard'
 import BarChart from '../components/dashboard/BarChart'
 import TransactionTable from '../components/dashboard/TransactionTable'
 import { useTransactions } from '../context/TransactionsContext'
-import { money } from '../utils/format'
+import AnimatedMoney from '../components/AnimatedMoney'
+
+<StatCard icon={Wallet} label="Total Balance" value={<AnimatedMoney value={stats.balance} />} change={balanceNote} up />
+<StatCard icon={TrendingUp} label="Income" value={<AnimatedMoney value={stats.income} />} change={`${stats.incomeCount} transactions`} up />
+<StatCard icon={TrendingDown} label="Expenses" value={<AnimatedMoney value={stats.expense} />} change={`${stats.expenseCount} transactions`} up={false} />
+<StatCard icon={PiggyBank} label="Savings" value={<AnimatedMoney value={stats.savings} />} change={`${stats.savingsRate}% of income`} up />
 
 export default function Dashboard() {
   const { transactions, stats, monthly, settings } = useTransactions()

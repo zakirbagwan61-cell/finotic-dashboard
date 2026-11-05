@@ -44,17 +44,19 @@ export default function App() {
       {menuOpen && <div className="backdrop" onClick={() => setMenuOpen(false)} />}
       <div className="main">
         <Topbar theme={theme} onToggleTheme={toggleTheme} onMenu={() => setMenuOpen(true)} />
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/accounts" element={<Accounts />} />
-          <Route path="/transactions" element={<Transactions />} />
-          <Route path="/budgets" element={<Budgets />} />
-          <Route path="/goals" element={<Goals />} />
-          <Route path="/recurring" element={<Recurring />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<Settings theme={theme} onToggleTheme={toggleTheme} />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <div className="page-anim" key={pathname}>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/accounts" element={<Accounts />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/budgets" element={<Budgets />} />
+            <Route path="/goals" element={<Goals />} />
+            <Route path="/recurring" element={<Recurring />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<Settings theme={theme} onToggleTheme={toggleTheme} />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
       </div>
       <Toaster
         position="bottom-right"
